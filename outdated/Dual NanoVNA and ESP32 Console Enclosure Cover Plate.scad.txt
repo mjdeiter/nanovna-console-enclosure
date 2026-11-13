@@ -1,0 +1,35 @@
+// Dual NanoVNA-H4 & ESP32-S3 Back Cover Plate (Standalone)
+// All dimensions in millimeters
+
+$fn = 60;
+
+wall = 3;
+boss_r = 4.5; 
+
+vna_w = 160; 
+vna_h = 102; 
+esp_w = 108; 
+esp_h = 72;  
+
+cav_w = vna_w + esp_w + wall + 10;
+cav_h = max(vna_h, esp_h) + 10;
+outer_w = cav_w + wall * 2;
+outer_h = cav_h + wall * 2;
+
+difference() {
+    cube([outer_w, outer_h, wall]);
+    
+    boss_centers = [
+        [wall + boss_r, wall + boss_r, -1],
+        [outer_w - wall - boss_r, wall + boss_r, -1],
+        [wall + boss_r, outer_h - wall - boss_r, -1],
+        [outer_w - wall - boss_r, outer_h - wall - boss_r, -1]
+    ];
+    for (pos = boss_centers) {
+        translate([pos[0], pos[1], -1])
+            cylinder(r=1.6, h=wall + 2);
+    }
+    
+    translate([outer_w / 2 - 12, outer_h - wall - 1, -1])
+        cube([24, wall + 2, wall + 2]);
+}

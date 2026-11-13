@@ -1,0 +1,78 @@
+// Dual NanoVNA-H4 & ESP32-S3 Main Housing Body (Standalone)
+// All dimensions in millimeters
+
+$fn = 60;
+
+wall = 3;
+boss_r = 4.5; 
+
+vna_w = 160; 
+vna_h = 102; 
+vna_d = 28;
+
+esp_w = 108; 
+esp_h = 72;  
+esp_d = 24;
+
+cav_w = vna_w + esp_w + wall + 10;
+cav_h = max(vna_h, esp_h) + 10;
+cav_d = max(vna_d, esp_d) + 5;
+
+outer_w = cav_w + wall * 2;
+outer_h = cav_h + wall * 2;
+outer_d = cav_d + wall; 
+
+difference() {
+    union() {
+        // Main outer structural block
+        cube([outer_w, outer_h, outer_d]);
+        
+        // Internal Corner Screw Bosses (Posts for backplate)
+        translate([wall + boss_r, wall + boss_r, wall])
+            cylinder(r=boss_r, h=cav_d);
+        translate([outer_w - wall - boss_r, wall + boss_r, wall])
+            cylinder(r=boss_r, h=cav_d);
+        translate([wall + boss_r, outer_h - wall - boss_r, wall])
+            cylinder(r=boss_r, h=cav_d);
+        translate([outer_w - wall - boss_r, outer_h - wall - boss_r, wall])
+            cylinder(r=boss_r, h=cav_d);
+            
+        // Structural Wall Gussets
+        translate([wall + boss_r, wall, wall])
+            cube([15, boss_r, cav_d]);
+        translate([outer_w - wall - boss_r - 15, wall, wall])
+            cube([15, boss_r, cav_d]);
+    }
+    
+    // Internal main device cavity (hollowed from the rear)
+    translate([wall, wall, wall])
+        cube([cav_w, cav_h, cav_d + 1]);
+        
+    // Front NanoVNA Screen Window (Creates front retention lip)
+    translate([wall + 15, wall + (cav_h - 74)/2, -1])
+        cube([vna_w - 30, 74, wall + 2]);
+        
+    // Front ESP32 Screen Window (Creates front retention lip)
+    translate([wall + vna_w + wall + 20, wall + (cav_h - 48)/2, -1])
+        cube([esp_w - 40, 48, wall + 2]);
+        
+    // Bottom port clearance slot for NanoVNA SMA connectors
+    translate([wall + 25, -1, wall + 5])
+        cube([vna_w - 50, wall + 2, 16]);
+        
+    // Internal pass-through channel for inter-device USB-C cable
+    translate([wall + vna_w, cav_h / 2 - 10, wall + 5])
+        cube([wall + 15, 20, 20]);
+        
+    // M3 Screw / Heat-set insert holes through corner bosses
+    boss_centers = [
+        [wall + boss_r, wall + boss_r, -1],
+        [outer_w - wall - boss_r, wall + boss_r, -1],
+        [wall + boss_r, outer_h - wall - boss_r, -1],
+        [outer_w - wall - boss_r, outer_h - wall - boss_r, -1]
+    ];
+    for (pos = boss_centers) {
+        translate(pos)
+            cylinder(r=2.0, h=outer_d + 2);
+    }
+}
