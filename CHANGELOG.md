@@ -76,7 +76,7 @@ Sessions: **1** = earlier chats, individual chats not retrievable (design v1 to 
 - **Corrected** an earlier claim: "55 print stalls" during the second attempt. The Klipper `print_stall` counter jumped 0 to 55 about two minutes after the Oct 29 E-stop (Klipper restarting) and reset at the next restart. It did not change during any of the three prints.
 - **Found** old body_left, body_right and back_plate gcodes share one slicer config (hash 49333a5a4ab5e3a3). The same profile printed body_right perfectly, so the failure is specific to body_left's geometry (143 x 116 mm solid plate), not the printer or profile in general [inferred].
 
-### 2026-10-30 (session 2, chat d4a74f82)
+### 2026-10-30 (session 2, chat <chat-id>)
 - **Reviewed** printer history and Klipper log: body_left stopped at layers 13 and 15, both manual stops.
 - **Diagnosed** (working theory): the 3 mm base plate has a plate-wide bridge layer at layer 11 over 15 % gyroid, then the top skin at layers 12-15; hot PETG with only ~30 % fan, plus stringing, caused the tangle.
 - **Agreed profile** for body_left and back_plate: 100 % infill, 5 perimeters, nozzle 235 C (240 first layer), bed 70 C, part fan capped 60-70 % after layer 2, solid-infill and bridge speed capped at 60 mm/s, 0.4 mm Z-hop.
